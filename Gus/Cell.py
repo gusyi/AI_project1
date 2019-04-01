@@ -7,8 +7,8 @@ class Cell:
         self.node = None
         self.occupied = False
     
-    def addPiece(self, tile):
-        self.node = tile
+    def addPiece(self, piece):
+        self.node = piece
         self.occupied = True
         
     def removePiece(self):
