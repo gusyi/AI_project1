@@ -2,8 +2,8 @@
 
 class Piece:
     # initialise the piece with type and position on the board
-    def __init__(self,type, q, r):
-        self.type = type
+    def __init__(self,type_, q, r):
+        self.type = type_
         self.q = q
         self.r = r
         
