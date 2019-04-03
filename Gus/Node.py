@@ -1,6 +1,7 @@
 # Node for path finding in the map
 class Node:
     def __init__(self, q, r):
+        self.name = True
         self.q = q
         self.r = r
         self.visited = False
@@ -15,3 +16,8 @@ class Node:
         
     def getLastNode(self):
         return self.last
+    
+    
+class nonValidNode:
+    def __init__(self):
+        self.name = False
