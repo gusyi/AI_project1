@@ -11,7 +11,7 @@ class Node:
         return self.visited
     
     def visit(self, lastq, lastr):
-        self.visited - True
+        self.visited = True
         self.last = (lastq, lastr)
         
     def getLastNode(self):
