@@ -5,13 +5,45 @@
 #                          (2) the path to the goal
 #                          (3) responding movement, 1: move,   2: jump
 
-# MapGreedy():  Search the lowest cost, and make the move
-#               return: the path to the goal
+# MapGreedy():  Search the lowest cost to the goal for each piece
+#               choose the one with highest number of jump
+#               if the jump number is same, then choose the shortest one
+#               print the path to the goal
 
-# check 
 
 # input: List of Cell(broad), list of pieces, goals
 # the broad: 2d list
+
+
+##Test Case for MapGreedy():
+"""
+q, r = 7, 7;
+Board= [[0 for x in range(q)] for y in range(r)] 
+for i in range(0,7):
+    for j in range(0,7):
+        if 3 <= (i+j) < 10:
+            Board[i][j] = Cell(i-3, j-3)
+        
+green_piece = Piece("green", 0, -1)
+piece_2 = Piece("green", 1, -3)
+piece_3 = Piece("green", 0, -3)
+piece_4 = Piece("green", 2, -2)
+pieces = [green_piece, piece_2, piece_3, piece_4]
+Board[3][2].addPiece(green_piece)
+goals = []
+goals.append(Node(-3,3))
+goals.append(Node(-2,3))
+goals.append(Node(-1,3))
+goals.append(Node(0,3))
+block_1 = Piece("block", -2, 2)
+block_2 = Piece("block", -1, 2)
+block_3 = Piece("block", 0, 2)
+Board[1][5].addPiece(block_1)
+Board[2][5].addPiece(block_2)
+Board[3][5].addPiece(block_3)
+    
+MapGreedy(pieces, Board, goals)
+"""
 
 
 # output: the path to the goal, list of tuples
@@ -231,3 +263,69 @@ def singleGreedy(piece, board, goals):
     final_path.append(last)
 
     return final_path
+
+
+
+def MapGreedy(pieces, board, goals):
+    exitNumber = len(pieces)
+    
+    while exitNumber != 0:
+        exitmove = False
+        
+        #check for exist move:     
+        for i in range(len(pieces)):
+            if checkForExit(pieces[i], goals):
+                piece = pieces[i]
+                print("EXIT from "+str((piece.getQ(), piece.getR())))
+                #remove it from the board
+                board[piece.getQ()+3][piece.getR()+3].removePiece()
+                del pieces[i]
+                exitmove=True
+                exitNumber -= 1
+                # can only move one at each round
+                break
+        #can only move one at each round
+        if exitmove:
+            continue
+        
+        
+        #for each piece find the best path to the goal
+        paths = []
+        for piece in pieces:
+            paths.append(singleGreedy(piece, Board, goals)[::-1])
+        
+        #search for the path with highest number of jump
+        jumps = []
+        for path in paths:
+            jumps.append(jumpActionsDetection(path))
+        maxjump = max(jumps)
+        #print(maxjump)
+        
+        #check for the shorttest path in the maxjump
+        shortestloc = 0
+        shortestlen = 999
+        for i in range(len(jumps)):
+            if jumps[i] == maxjump:
+                if len(paths[i]) < shortestlen:
+                    shortestlen = len(paths[i])
+                    shortestloc = i
+                    #print(i)
+        #do the move!
+        currentloc = paths[shortestloc][0]
+        nextloc = paths[shortestloc][1]
+        
+        #deregister from the current node
+        board[currentloc[0]+3][currentloc[1]+3].removePiece()
+        
+        #move the piece and register it at the new node
+        pieces[shortestloc].setQ(nextloc[0])
+        pieces[shortestloc].setR(nextloc[1])
+        board[nextloc[0]+3][nextloc[1]+3].addPiece(pieces[shortestloc])
+        
+        if abs(currentloc[0] - nextloc[0]) == 2 or abs(currentloc[1] - nextloc[1]) ==2:
+            print("JUMP from "+str(currentloc) + " to "+ str(nextloc))
+        else:
+            print("Move from "+str(currentloc) + " to "+ str(nextloc))
+        
+                
+        
